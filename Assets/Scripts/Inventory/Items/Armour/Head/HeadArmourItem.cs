@@ -1,6 +1,7 @@
 ﻿using System;
-using Infrastructure.StaticData.Enums.InventoryItems;
+using DerivedClasses;
 using Sirenix.Serialization;
+using static Infrastructure.StaticData.Enums.InventoryItems.ItemEnums;
 
 namespace Inventory.Items.Armour.Head
 {
@@ -8,10 +9,15 @@ namespace Inventory.Items.Armour.Head
    public class HeadArmourItem : ArmourItem, IHeadArmourItem
    {
       [OdinSerialize]
-      public ItemEnums.HeadArmourTypes HeadArmourType
+      public HeadArmourTypes HeadArmourType
       {
          get;
          set;
+      }
+      
+      public override EnumTypeCompound GetEnumTypeCompound()
+      {
+         return new EnumTypeCompound((int)HeadArmourType, typeof(HeadArmourTypes));
       }
    }
 }

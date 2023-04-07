@@ -5,6 +5,11 @@
    // Also it's convenient to have all item type enums in one place
    public sealed record ItemEnums
    {
+      public enum WeaponTypes
+      {
+         Pistol,
+         Rifle,
+      }
       public enum AmmoTypes
       {
          PistolBullet,

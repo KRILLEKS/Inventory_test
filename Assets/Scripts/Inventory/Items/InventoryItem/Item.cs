@@ -1,4 +1,5 @@
 using System;
+using DerivedClasses;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using UnityEngine;
@@ -30,6 +31,11 @@ namespace Inventory.Items.InventoryItem
       {
          get;
          set;
+      }
+
+      public virtual EnumTypeCompound GetEnumTypeCompound()
+      {
+         throw new NotImplementedException();
       }
    }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
-using Infrastructure.StaticData.Enums.InventoryItems;
+using DerivedClasses;
 using Sirenix.Serialization;
+using static Infrastructure.StaticData.Enums.InventoryItems.ItemEnums;
 
 namespace Inventory.Items.Armour.Body
 {
@@ -9,10 +10,15 @@ namespace Inventory.Items.Armour.Body
                              IBodyArmourItem
    {
       [OdinSerialize]
-      public ItemEnums.BodyArmourTypes ArmourType
+      public BodyArmourTypes ArmourType
       {
          get;
          set;
+      }
+
+      public override EnumTypeCompound GetEnumTypeCompound()
+      {
+         return new EnumTypeCompound((int)ArmourType, typeof(BodyArmourTypes));
       }
    }
 }

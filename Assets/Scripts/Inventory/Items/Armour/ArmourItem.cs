@@ -6,7 +6,7 @@ using Sirenix.Serialization;
 namespace Inventory.Items.Armour
 {
    [Serializable]
-   public abstract class ArmourItem : InventoryItem.Item, IArmourItem
+   public abstract class ArmourItem : Item, IArmourItem
    {
       [Title("ItemType related")]
       [OdinSerialize]

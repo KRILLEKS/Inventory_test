@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using DerivedClasses;
+using UnityEngine;
 
 namespace Inventory.Items.InventoryItem
 {
@@ -7,5 +9,6 @@ namespace Inventory.Items.InventoryItem
       public Texture2D Texture2D { get; set; }
       public string Name { get; set; }
       public float Weight { get; set; }
+      public EnumTypeCompound GetEnumTypeCompound();
    }
 }

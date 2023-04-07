@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using DerivedClasses;
+using Infrastructure.StaticData.Enums.InventoryItems;
 using static Infrastructure.StaticData.Enums.InventoryItems.ItemEnums;
 using Inventory.Items.InventoryItem;
 using Sirenix.OdinInspector;
@@ -12,6 +14,13 @@ namespace Inventory.Items.Weapon
                              IWeaponItem
    {
       [Title("ItemType related")]
+      [OdinSerialize]
+      public WeaponTypes WeaponType
+      {
+         get;
+         set;
+      }
+
       [OdinSerialize]
       public AmmoTypes AmmoType
       {
@@ -32,6 +41,11 @@ namespace Inventory.Items.Weapon
       {
          get;
          set;
+      }
+      
+      public override EnumTypeCompound GetEnumTypeCompound()
+      {
+         return new EnumTypeCompound((int)WeaponType, typeof(WeaponTypes));
       }
    }
 }

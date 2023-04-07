@@ -2,6 +2,7 @@
 using Infrastructure.Services.AssetProvider;
 using Infrastructure.StaticData;
 using Infrastructure.StaticData.Paths;
+using Inventory.InventoryUIUpdater;
 using UnityEngine;
 using Zenject;
 
