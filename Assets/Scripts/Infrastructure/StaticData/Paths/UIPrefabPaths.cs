@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.StaticData.Paths
 {
-   public static class UIPrefabPaths
+   public sealed record UIPrefabPaths
    {
       public const string CellPrefabPath = "UI/Prefabs/Cell";
    }

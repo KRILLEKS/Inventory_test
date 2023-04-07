@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d7428925b34873bc034258121b2560, type: 3}
+  m_Name: Rifle
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 2800000, guid: bc15d2577531d0445bfa3c05efc9f022, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: Item
+      Entry: 7
+      Data: 0|Inventory.Items.Weapon.WeaponItem, Assembly-CSharp
+    - Name: Texture2D
+      Entry: 10
+      Data: 0
+    - Name: Name
+      Entry: 1
+      Data: Rifle
+    - Name: Weight
+      Entry: 4
+      Data: 5
+    - Name: AmmoType
+      Entry: 3
+      Data: 1
+    - Name: Damage
+      Entry: 4
+      Data: 20
+    - Name: ReloadSpeed
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
