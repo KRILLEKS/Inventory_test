@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Extension;
 using Infrastructure.StaticData.Enums.InventoryItems;
 using Infrastructure.StaticData.ScriptableObjects;
 using Inventory.InventoryHandleRelated;
@@ -27,8 +28,6 @@ public class Test : MonoBehaviour
    {
       if (enable == false)
          return;
-
-
    }
 
    [Button]

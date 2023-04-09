@@ -8,6 +8,7 @@ namespace Infrastructure.StaticData.ScriptableObjects
    {
       public int cellsAmount = 30;
       public int lockedCells = 15;
+      public int newCellPrice = 150;
       
       [PropertyOrder(10)]
       [PropertySpace(spaceBefore:20)]
@@ -16,6 +17,7 @@ namespace Infrastructure.StaticData.ScriptableObjects
       {
          cellsAmount = 30;
          lockedCells = 15;
+         newCellPrice = 150;
       }
    }
 }

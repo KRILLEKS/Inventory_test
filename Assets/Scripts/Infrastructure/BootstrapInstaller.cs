@@ -12,7 +12,7 @@ namespace Infrastructure
    {
       public override void InstallBindings()
       {
-         Container.BindInterfacesAndSelfTo<InventoryHandler>().AsSingle();
+         Container.BindInterfacesAndSelfTo<ButtonAssistedInventory>().AsSingle();
          
          Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle();
          Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();

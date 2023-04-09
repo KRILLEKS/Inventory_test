@@ -21,8 +21,8 @@ namespace Inventory.InventoryHandleRelated
          set;
       }
 
-      private readonly Dictionary<Type, Dictionary<int, List<Slot>>> _items = new (); // type(enum) - subtype(enumValue) - slot
-      private readonly List<int> _availableSlotsIndexes = new (); // must be loaded
+      internal readonly Dictionary<Type, Dictionary<int, List<Slot>>> _items = new (); // type(enum) - subtype(enumValue) - slot
+      internal readonly List<int> _availableSlotsIndexes = new (); // must be loaded
 
       public void Initialize()
       {
@@ -94,11 +94,8 @@ namespace Inventory.InventoryHandleRelated
       }
 
       // returns true if was able to remove item. Returns false if not enough items of this type
-      public bool RemoveItem(IItem item, int amount = 1)
+      public bool RemoveItem(Type itemEnumType, int itemEnumValue, int amount = 1)
       {
-         Type itemEnumType = item.GetEnumTypeCompound().Type;
-         int itemEnumValue = item.GetEnumTypeCompound().EnumRawValue;
-
          if (CheckIfHaveThisItem() == false
              || CheckIfHaveEnoughItem() == false)
          {
@@ -157,6 +154,11 @@ namespace Inventory.InventoryHandleRelated
             if (_items[enumType].Count == 0)
                _items.Remove(enumType);
          }
+      }
+
+      public bool RemoveItem(IItem type, int amount = 1)
+      {
+         return RemoveItem(type.GetEnumTypeCompound().Type, type.GetEnumTypeCompound().EnumRawValue, amount);
       }
    }
 }
