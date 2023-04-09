@@ -8,5 +8,11 @@ namespace Extension
       {
          return list[UnityEngine.Random.Range(0, list.Count)];
       }
+      
+      public static List<T> RemoveLast<T>(this List<T> list)
+      {
+         list.RemoveAt(list.Count - 1);
+         return list;
+      }
    }
 }

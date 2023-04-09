@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DerivedClasses;
 using Extension;
 using Infrastructure.Services.StaticDataProvider;
@@ -11,17 +12,18 @@ using Zenject;
 
 namespace Inventory.InventoryHandleRelated
 {
-   public class InventoryHandler : IInventoryHandler, IInitializable
+   public class InventoryHandler : IInventoryHandler,
+                                   IInitializable
    {
       public Action<Slot> OnSlotUpdated
       {
          get;
          set;
       }
-      
+
       private readonly Dictionary<Type, Dictionary<int, List<Slot>>> _items = new (); // type(enum) - subtype(enumValue) - slot
       private readonly List<int> _availableSlotsIndexes = new (); // must be loaded
-      
+
       public void Initialize()
       {
          for (int i = 0; i < 15; i++)
@@ -29,7 +31,7 @@ namespace Inventory.InventoryHandleRelated
             _availableSlotsIndexes.Add(i);
          }
       }
-      
+
       public void AddItem(IItem item, int amount = 1)
       {
          var itemType = item.GetEnumTypeCompound().Type;
@@ -53,7 +55,7 @@ namespace Inventory.InventoryHandleRelated
          {
             int remainingAmount = amount;
             AddItem2Slot();
-            
+
             while (remainingAmount > 0)
             {
                if (AddNewSlot() == false)
@@ -85,9 +87,75 @@ namespace Inventory.InventoryHandleRelated
 
             int slotIndex = _availableSlotsIndexes.Random();
             _items[itemType][itemEnumValue].Add(new Slot(item, slotIndex));
-            
+
             _availableSlotsIndexes.Remove(slotIndex);
             return true;
+         }
+      }
+
+      // returns true if was able to remove item. Returns false if not enough items of this type
+      public bool RemoveItem(IItem item, int amount = 1)
+      {
+         Type itemEnumType = item.GetEnumTypeCompound().Type;
+         int itemEnumValue = item.GetEnumTypeCompound().EnumRawValue;
+
+         if (CheckIfHaveThisItem() == false
+             || CheckIfHaveEnoughItem() == false)
+         {
+            Debug.Log("You don't have enough items");
+            return false;
+         }
+
+         RemoveItemsFromInventory();
+         return true;
+
+         bool CheckIfHaveThisItem()
+         {
+            if (_items.ContainsKey(itemEnumType) == false
+                || _items[itemEnumType].ContainsKey(itemEnumValue) == false)
+               return false;
+
+            return true;
+         }
+         bool CheckIfHaveEnoughItem()
+         {
+            return _items[itemEnumType][itemEnumValue].Sum(_ => _.ItemAmountInSlot) >= amount;
+         }
+         void RemoveItemsFromInventory()
+         {
+            int remainingAmount = amount;
+            while (remainingAmount > 0)
+            {
+               var slot = _items[itemEnumType][itemEnumValue][^1];
+               
+               if (slot.ItemAmountInSlot >= remainingAmount)
+               {
+                  slot.ItemAmountInSlot -= remainingAmount;
+                  OnSlotUpdated(slot);
+
+                  if (slot.ItemAmountInSlot == 0)
+                     RemoveLastSlot(itemEnumType, itemEnumValue);
+
+                  return;
+               }
+
+               remainingAmount -= slot.ItemAmountInSlot;
+               slot.ItemAmountInSlot = 0;
+               OnSlotUpdated(slot);
+               RemoveLastSlot(itemEnumType, itemEnumValue);
+            }
+         }
+
+         void RemoveLastSlot(Type enumType, int enumValue)
+         {
+            _availableSlotsIndexes.Add(_items[enumType][enumValue][^1].SlotIndex);
+            _items[enumType][enumValue].RemoveLast();
+
+            if (_items[enumType][enumValue].Count == 0)
+               _items[enumType].Remove(enumValue);
+
+            if (_items[enumType].Count == 0)
+               _items.Remove(enumType);
          }
       }
    }

@@ -30,9 +30,17 @@ namespace Inventory.InventoryUIUpdater
       {
          var cellLayout = _cellLayouts[updatedSlot.SlotIndex];
 
-         if (cellLayout.HasItem == false)
-            ChangeSlotState(updatedSlot);
-
+         if (cellLayout.HasItem && updatedSlot.ItemAmountInSlot == 0)
+         {
+            cellLayout.HasItem = false;
+            DisableSlot(cellLayout, false);
+         }
+         else if (cellLayout.HasItem == false && updatedSlot.ItemAmountInSlot > 0)
+         {
+            cellLayout.HasItem = true;
+            EnableSlot(cellLayout, updatedSlot.Item is IStackable);
+         }
+         
          if (updatedSlot.Item is IStackable)
          {
             cellLayout.AmountTMP.text = updatedSlot.ItemAmountInSlot.ToString();
@@ -42,25 +50,26 @@ namespace Inventory.InventoryUIUpdater
             cellLayout.UnstackableIconRawImage.texture = updatedSlot.Item.Texture2D;
       }
 
-      private void ChangeSlotState(Slot slot)
+      private void DisableSlot(CellLayout cellLayout, bool isActive)
       {
-         var cellLayout = _cellLayouts[slot.SlotIndex];
-         var hasItemInverted = cellLayout.HasItem == false;
-
-         if (slot.Item is IStackable)
+         cellLayout.AmountTMP.gameObject.SetActive(false);
+         cellLayout.StackableIconRawImage.gameObject.SetActive(false);
+         cellLayout.UnstackableIconRawImage.gameObject.SetActive(false);
+      }
+      private void EnableSlot(CellLayout cellLayout, bool isStackable)
+      {
+         if (isStackable)
          {
-            cellLayout.AmountTMP.gameObject.SetActive(hasItemInverted);
-            cellLayout.UnstackableIconRawImage.gameObject.SetActive(cellLayout.HasItem);
-            cellLayout.StackableIconRawImage.gameObject.SetActive(hasItemInverted);
+            cellLayout.AmountTMP.gameObject.SetActive(true);
+            cellLayout.StackableIconRawImage.gameObject.SetActive(true);
+            cellLayout.UnstackableIconRawImage.gameObject.SetActive(false);
          }
          else
          {
-            cellLayout.AmountTMP.gameObject.SetActive(cellLayout.HasItem);
-            cellLayout.UnstackableIconRawImage.gameObject.SetActive(hasItemInverted);
-            cellLayout.StackableIconRawImage.gameObject.SetActive(cellLayout.HasItem);
+            cellLayout.AmountTMP.gameObject.SetActive(false);
+            cellLayout.StackableIconRawImage.gameObject.SetActive(false);
+            cellLayout.UnstackableIconRawImage.gameObject.SetActive(true);
          }
-
-         cellLayout.HasItem = hasItemInverted;
       }
 
       public void Dispose()

@@ -36,6 +36,13 @@ public class Test : MonoBehaviour
    {
       _inventoryHandler.AddItem(itemData.Item, amount);
    }
+
+   [Button]
+   private void RemoveItemFromInventory(ItemData itemData, int amount)
+   {
+      _inventoryHandler.RemoveItem(itemData.Item, amount);
+   }
+
    private void GetAllStackableItems()
    {
       var items = Resources.LoadAll<ItemData>("ScriptableObjects/Items");
