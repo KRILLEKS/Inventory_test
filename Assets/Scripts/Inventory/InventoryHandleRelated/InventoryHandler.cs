@@ -3,33 +3,81 @@ using System.Collections.Generic;
 using System.Linq;
 using DerivedClasses;
 using Extension;
+using Infrastructure.Serialization.Data;
+using Infrastructure.Serialization.SerializationInterfaces;
+using Infrastructure.Serialization.SerializationServices;
+using Infrastructure.Services.ItemsProvider;
 using Infrastructure.Services.StaticDataProvider;
 using Infrastructure.StaticData.Paths;
 using Infrastructure.StaticData.ScriptableObjects;
+using Inventory.Items;
 using Inventory.Items.InventoryItem;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
 namespace Inventory.InventoryHandleRelated
 {
    public class InventoryHandler : IInventoryHandler,
-                                   IInitializable
+                                   ISavable
    {
+      public ISaveLoadService _saveLoadService
+      {
+         get;
+         set;
+      }
+
+      private IItemsProvider _itemsProvider;
+
       public Action<Slot> OnSlotUpdated
       {
          get;
          set;
       }
 
-      internal readonly Dictionary<Type, Dictionary<int, List<Slot>>> _items = new (); // type(enum) - subtype(enumValue) - slot
-      internal readonly List<int> _availableSlotsIndexes = new (); // must be loaded
+      internal Dictionary<Type, Dictionary<int, List<Slot>>> _items = new (); // type(enum) - subtype(enumValue) - slot
+      internal List<int> _availableSlotsIndexes = new (); // must be loaded
+
+      [Inject]
+      private void Construct(ISaveLoadService saveLoadService, IItemsProvider itemsProvider)
+      {
+         _saveLoadService = saveLoadService;
+         _itemsProvider = itemsProvider;
+      }
 
       public void Initialize()
       {
-         for (int i = 0; i < 15; i++)
+         Load();
+      }
+
+      public void Load()
+      {
+         var inventorySaveData = _saveLoadService?.Read<InventorySaveData>(SaveDataPaths.InventoryData);
+         if (inventorySaveData == null)
          {
-            _availableSlotsIndexes.Add(i);
+            for (int i = 0; i < 15; i++)
+               _availableSlotsIndexes.Add(i);
+            return;
          }
+         
+         _availableSlotsIndexes = inventorySaveData.AvailableSlotsIndexes;
+
+         foreach (var savedItem in inventorySaveData.Items)
+            foreach (var slot in savedItem.Slots)
+            {
+               var typeEnumCompound = new EnumTypeCompound(slot.Value, Type.GetType(slot.TypeString));
+               var itemType = typeEnumCompound.Type;
+               var itemEnumValue = typeEnumCompound.EnumRawValue;
+               
+               if (_items.ContainsKey(itemType) == false)
+                  _items.Add(itemType, new Dictionary<int, List<Slot>>());
+               if (_items[itemType].ContainsKey(itemEnumValue) == false)
+                  _items[itemType].Add(itemEnumValue, new List<Slot>());
+
+               _items[itemType][itemEnumValue].Add(new Slot(typeEnumCompound, slot.IsStackable, slot.SlotIndex, slot.MaxStack));
+               _items[itemType][itemEnumValue][^1].ItemAmountInSlot = slot.ItemAmountInSlot;
+               OnSlotUpdated.Invoke(_items[itemType][itemEnumValue][^1]);
+            }
       }
 
       public void AddItem(IItem item, int amount = 1)
@@ -86,7 +134,11 @@ namespace Inventory.InventoryHandleRelated
                _items[itemType].Add(itemEnumValue, new List<Slot>());
 
             int slotIndex = _availableSlotsIndexes.Random();
-            _items[itemType][itemEnumValue].Add(new Slot(item, slotIndex));
+            _items[itemType][itemEnumValue]
+               .Add(new Slot(item.GetEnumTypeCompound(),
+                             item is IStackable,
+                             slotIndex,
+                             (item is IStackable stackable) ? stackable.MaxStack : 1));
 
             _availableSlotsIndexes.Remove(slotIndex);
             return true;
@@ -124,7 +176,7 @@ namespace Inventory.InventoryHandleRelated
             while (remainingAmount > 0)
             {
                var slot = _items[itemEnumType][itemEnumValue][^1];
-               
+
                if (slot.ItemAmountInSlot >= remainingAmount)
                {
                   slot.ItemAmountInSlot -= remainingAmount;
@@ -159,6 +211,16 @@ namespace Inventory.InventoryHandleRelated
       public bool RemoveItem(IItem type, int amount = 1)
       {
          return RemoveItem(type.GetEnumTypeCompound().Type, type.GetEnumTypeCompound().EnumRawValue, amount);
+      }
+
+      public void Save()
+      {
+         _saveLoadService.Write(SaveDataPaths.InventoryData, new InventorySaveData(_items, _availableSlotsIndexes));
+      }
+
+      public void Dispose()
+      {
+         Save();
       }
    }
 }

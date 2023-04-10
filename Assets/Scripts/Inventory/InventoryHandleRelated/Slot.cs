@@ -1,24 +1,31 @@
-﻿using Inventory.Items;
+﻿using System;
+using DerivedClasses;
+using Inventory.Items;
 using Inventory.Items.InventoryItem;
 
 namespace Inventory.InventoryHandleRelated
 {
+   [Serializable]
    public class Slot
    {
-      public Slot(IItem item, int slotIndex)
+      public Slot(EnumTypeCompound enumTypeCompound, bool isStackable, int slotIndex, int maxStack = 1)
       {
-         Item = item;
+         EnumTypeCompound = enumTypeCompound;
+         IsStackable = isStackable;
          SlotIndex = slotIndex;
+         MaxStack = maxStack;
       }
 
-      public IItem Item;
+      public EnumTypeCompound EnumTypeCompound;
+      public bool IsStackable;
+      public int MaxStack;
       public int ItemAmountInSlot;
       public int SlotIndex;
 
       // returns remainder (amount that can't fits in slot)
       public int AddItem(int amount)
       {
-         if (Item is IStackable == false)
+         if (IsStackable == false)
          {
             if (ItemAmountInSlot == 1)
                return amount;
@@ -27,9 +34,8 @@ namespace Inventory.InventoryHandleRelated
             return --amount;
          }
 
-         var maxStack = ((IStackable) Item).MaxStack;
          // everything fits in slot
-         if (ItemAmountInSlot + amount <= maxStack)
+         if (ItemAmountInSlot + amount <= MaxStack)
          {
             ItemAmountInSlot += amount;
             return 0;
@@ -37,7 +43,7 @@ namespace Inventory.InventoryHandleRelated
          // can't fit everything in slot
          else
          {
-            int amount2Add = maxStack - ItemAmountInSlot;
+            int amount2Add = MaxStack - ItemAmountInSlot;
             ItemAmountInSlot += amount2Add;
 
             return amount - amount2Add;

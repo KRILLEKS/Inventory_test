@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Infrastructure.Services.ItemsProvider;
 using Inventory.InventoryHandleRelated;
 using Inventory.Items;
 using UnityEngine;
@@ -11,12 +12,14 @@ namespace Inventory.InventoryUIUpdater
                                         IDisposable
    {
       private IInventoryHandler _inventoryHandler;
+      private IItemsProvider _itemsProvider;
       private List<CellLayout> _cellLayouts;
 
       [Inject]
-      private void Construct(IInventoryHandler inventoryHandler)
+      private void Construct(IInventoryHandler inventoryHandler, IItemsProvider itemsProvider)
       {
          _inventoryHandler = inventoryHandler;
+         _itemsProvider = itemsProvider;
 
          _inventoryHandler.OnSlotUpdated += UpdateSlotInfo;
       }
@@ -28,6 +31,7 @@ namespace Inventory.InventoryUIUpdater
 
       public void UpdateSlotInfo(Slot updatedSlot)
       {
+         var item = _itemsProvider.GetItem(updatedSlot.EnumTypeCompound);
          var cellLayout = _cellLayouts[updatedSlot.SlotIndex];
 
          if (cellLayout.HasItem && updatedSlot.ItemAmountInSlot == 0)
@@ -38,16 +42,16 @@ namespace Inventory.InventoryUIUpdater
          else if (cellLayout.HasItem == false && updatedSlot.ItemAmountInSlot > 0)
          {
             cellLayout.HasItem = true;
-            EnableSlot(cellLayout, updatedSlot.Item is IStackable);
+            EnableSlot(cellLayout, item is IStackable);
          }
          
-         if (updatedSlot.Item is IStackable)
+         if (item is IStackable)
          {
             cellLayout.AmountTMP.text = updatedSlot.ItemAmountInSlot.ToString();
-            cellLayout.StackableIconRawImage.texture = updatedSlot.Item.Texture2D;
+            cellLayout.StackableIconRawImage.texture = item.Texture2D;
          }
          else
-            cellLayout.UnstackableIconRawImage.texture = updatedSlot.Item.Texture2D;
+            cellLayout.UnstackableIconRawImage.texture = item.Texture2D;
       }
 
       private void DisableSlot(CellLayout cellLayout, bool isActive)

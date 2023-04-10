@@ -34,6 +34,9 @@ MonoBehaviour:
     - Name: Weight
       Entry: 4
       Data: 5
+    - Name: WeaponType
+      Entry: 3
+      Data: 1
     - Name: AmmoType
       Entry: 3
       Data: 1
