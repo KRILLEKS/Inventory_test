@@ -61,7 +61,7 @@ namespace Inventory.InventoryHandleRelated
          }
          
          _availableSlotsIndexes = inventorySaveData.AvailableSlotsIndexes;
-
+         
          foreach (var savedItem in inventorySaveData.Items)
             foreach (var slot in savedItem.Slots)
             {

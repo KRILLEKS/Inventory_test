@@ -60,6 +60,7 @@ namespace Inventory.InventoryUIUpdater
          cellLayout.StackableIconRawImage.gameObject.SetActive(false);
          cellLayout.UnstackableIconRawImage.gameObject.SetActive(false);
       }
+      
       private void EnableSlot(CellLayout cellLayout, bool isStackable)
       {
          if (isStackable)

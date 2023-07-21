@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1862fdd8916b47a5b0cf2bf1ba5019cb, type: 3}
   m_Name: InventoryData
   m_EditorClassIdentifier: 
-  cellsAmount: 30
-  lockedCells: 15
+  cellsAmount: 50
+  lockedCells: 20
+  newCellPrice: 150
